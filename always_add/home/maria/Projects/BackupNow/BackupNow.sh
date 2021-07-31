@@ -7,7 +7,7 @@ if [ $? -eq 0 ]; then
     git pull
     ~/git/BackupNow/manage.sh
     if [ $? -eq 0 ]; then
-        echo "The backup was skipped since BackupNow for Python ran."
+        echo "The backup was skipped since the system management script ran a different backup."
         exit 0
     fi
 fi
@@ -66,7 +66,7 @@ src="$HOME/Desktop"
 rsync -tr --info=progress2 "$src/" "$DST_PROFILE/Desktop"
 code=$?
 if [ $code -ne 0 ]; then
-    customExit "Copying $src failed. Look at the black Terminal window behind this message to see the errors and copy and paste them to somewhere." $code
+    customExit "Copying $src failed. Look at the black Terminal window behind this message to see the errors and copy so that you can paste them into an email or document for support." $code
 fi
 #cp ~/Desktop/ $DST_PROFILE/Desktop
 echo "* copying Projects..."
@@ -74,7 +74,7 @@ src="$HOME/Projects"
 rsync -tr --info=progress2 "$src/" "$DST_PROFILE/Projects"
 code=$?
 if [ $code -ne 0 ]; then
-    customExit "Copying $src failed. Look at the black console window to see the errors and copy and paste them to somewhere." $code
+    customExit "Copying $src failed. Look at the black console window to see the errors and copy so that you can paste them into an email or document for support." $code
 fi
 #cp -Rvf ~/Projects/ $DST_PROFILE/Projects
 echo "* copying Firefox Bookmarks..."
