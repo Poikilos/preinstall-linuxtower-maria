@@ -95,7 +95,7 @@ mkdir -p "$DST_PROFILE/Desktop"
 mkdir -p "$DST_PROFILE/Projects"
 echo "* copying Desktop..."
 src="$HOME/Desktop"
-rsync -tr --info=progress2 "$src/" "$DST_PROFILE/Desktop"
+rsync --protect-args -tr --info=progress2 "$src/" "$DST_PROFILE/Desktop"
 code=$?
 if [ $code -ne 0 ]; then
     customExit "Copying $src failed. Look at the black Terminal window behind this message to see the errors and copy so that you can paste them into an email or document for support." $code
@@ -103,7 +103,7 @@ fi
 #cp ~/Desktop/ $DST_PROFILE/Desktop
 echo "* copying Projects..."
 src="$HOME/Projects"
-rsync -tr --info=progress2 "$src/" "$DST_PROFILE/Projects"
+rsync --protect-args -tr --info=progress2 "$src/" "$DST_PROFILE/Projects"
 code=$?
 if [ $code -ne 0 ]; then
     customExit "Copying $src failed. Look at the black console window to see the errors and copy so that you can paste them into an email or document for support." $code
@@ -120,7 +120,7 @@ do
     this_source_path="/home/maria/.mozilla/firefox/$sub/bookmarkbackups"
     this_dest_path="$DST_PROFILE/.mozilla/firefox/$sub/bookmarkbackups"
     mkdir -p "$this_dest_path"
-    rsync -tr --info=progress2 "$this_source_path/" "$this_dest_path"
+    rsync --protect-args -tr --info=progress2 "$this_source_path/" "$this_dest_path"
     #^ formerly had no slash
     code=$?
     if [ $code -ne 0 ]; then
@@ -130,7 +130,7 @@ done
 
 echo "* copying Documents..."
 src="$HOME/Documents"
-rsync -tr --info=progress2 --exclude-from='/home/maria/exclude.txt' "$src/" "$DST_PROFILE/Documents"
+rsync --protect-args -tr --info=progress2 --exclude-from='/home/maria/exclude.txt' "$src/" "$DST_PROFILE/Documents"
 code=$?
 if [ $code -ne 0 ]; then
     customExit "Copying $src failed. Look at the black console window to see the errors and copy and paste them to somewhere." $code
