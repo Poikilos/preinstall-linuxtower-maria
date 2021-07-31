@@ -3,7 +3,7 @@
 #TARGET=/media/maria/TRANSCEND16
 PREV_DIR="`pwd`"
 
-if [ "@MANAGE" = "@" ]; then
+if [ "@$MANAGE" = "@" ]; then
     MANAGE=true
 fi
 
