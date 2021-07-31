@@ -66,19 +66,19 @@ do
 done
 
 if [ -z "$targetvol" ]; then
-  #( speaker-test -t sine -f 1000 )& pid=$! ; sleep 0.25s ; kill -9 $pid
-  #( speaker-test -t sine -f 700 )& pid=$! ; sleep 0.25s ; kill -9 $pid
-  echo ""
-  echo ""
-  _description="$primaryvol"
-  # ^ Use $primaryvol since no $targetvol was found.
-  if [ ! -z "$drive_description" ]; then
-      _description="$drive_description"
-  fi
-  xmessage -buttons Ok:0 -default Ok -nearmouse "Error: The drive was not detected. Try re-inserting $_description."
-  # echo "$drive_name is not plugged in--cannot continue."
-  #read -n 1 -p "Press [Enter] key to exit..."
-  exit
+    #( speaker-test -t sine -f 1000 )& pid=$! ; sleep 0.25s ; kill -9 $pid
+    #( speaker-test -t sine -f 700 )& pid=$! ; sleep 0.25s ; kill -9 $pid
+    echo ""
+    echo ""
+    _description="$primaryvol"
+    # ^ Use $primaryvol since no $targetvol was found.
+    if [ ! -z "$drive_description" ]; then
+        _description="$drive_description"
+    fi
+    xmessage -buttons Ok:0 -default Ok -nearmouse "Error: The drive was not detected. Try re-inserting $_description."
+    # echo "$drive_name is not plugged in--cannot continue."
+    #read -n 1 -p "Press [Enter] key to exit..."
+    exit 1
 fi
 
 #TARGET=$targetvol/macbuntu
@@ -128,10 +128,10 @@ fi
 #cp -Rvf "$HOME/Documents/" "$DST_PROFILE/Documents"
 #if [ $? -ne 0 ]; then
 #    xmessage -buttons Ok:0 -default Ok -nearmouse "Error: backup $DST_PROFILE/Documents failed. Try re-inserting $targetvol."
-  #( speaker-test -t sine -f 1000 )& pid=$! ; sleep 0.25s ; kill -9 $pid
-  #( speaker-test -t sine -f 1000 )& pid=$! ; sleep 0.25s ; kill -9 $pid
-  #( speaker-test -t sine -f 1000 )& pid=$! ; sleep 0.25s ; kill -9 $pid
-    #exit 1
+#    ( speaker-test -t sine -f 1000 )& pid=$! ; sleep 0.25s ; kill -9 $pid
+#    ( speaker-test -t sine -f 1000 )& pid=$! ; sleep 0.25s ; kill -9 $pid
+#    ( speaker-test -t sine -f 1000 )& pid=$! ; sleep 0.25s ; kill -9 $pid
+#    exit 1
 #fi
 xmessage -buttons Ok:0 -default Ok -nearmouse "The backup completed successfully."
 exit 0
