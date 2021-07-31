@@ -15,7 +15,7 @@ do
 done
 
 
-if [ "@MANAGE" = "@true" ]; then
+if [ "@$MANAGE" = "@true" ]; then
     cd ~/git/BackupNow
     if [ $? -eq 0 ]; then
         echo "* updating BackupNow..."
