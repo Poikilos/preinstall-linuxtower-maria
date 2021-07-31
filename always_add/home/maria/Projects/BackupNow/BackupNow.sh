@@ -48,8 +48,9 @@ customExit(){
     fi
     if [ $code -eq 23 ]; then
         echo "  (ignore the Invalid argument error above since it is related to temporary files or other system files)"
-    elif [ $code -eq 23 ]; then
-        echo "  (ignore the Invalid argument error above since it is related to temporary files or other system files)"
+    #elif [ $code -eq 22 ]; then
+    #    echo "  (ignore the Invalid argument error above since it is related to temporary files or other system files)"
+    #    NOTE: Error 22 can be due to a missing path, so allow exit in that case.
     else
         xmessage -buttons Ok:0 -default Ok -nearmouse "$msg"
         exit $code
@@ -119,12 +120,18 @@ for sub in `ls ~/.mozilla/firefox`
 do
     this_source_path="/home/maria/.mozilla/firefox/$sub/bookmarkbackups"
     this_dest_path="$DST_PROFILE/.mozilla/firefox/$sub/bookmarkbackups"
-    mkdir -p "$this_dest_path"
-    rsync --protect-args -tr --info=progress2 "$this_source_path/" "$this_dest_path"
-    #^ formerly had no slash
-    code=$?
-    if [ $code -ne 0 ]; then
-        xmessage -buttons Ok:0 -default Ok -nearmouse "Copying $src failed with code $code. Look at the black Terminal window behind this message to see the errors and copy and paste them to somewhere."
+    if [ -d "$this_source_path" ]; then
+        mkdir -p "$this_dest_path"
+        rsync --protect-args -tr --info=progress2 "$this_source_path/" "$this_dest_path"
+        #^ formerly had no slash
+        code=$?
+        if [ $code -ne 0 ]; then
+            customExit "Copying $src failed with code $code. Look at the black Terminal window behind this message to see the errors and copy and paste them to somewhere." $code
+        fi
+    else
+        if [ -d "$this_dest_path" ]; then
+            rmdir "$this_dest_path"
+        fi
     fi
 done
 
