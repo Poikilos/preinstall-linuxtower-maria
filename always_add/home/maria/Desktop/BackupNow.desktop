@@ -1,0 +1,17 @@
+[Desktop Entry]
+Version=1.0
+Exec=xfce4-terminal -e /home/maria/Projects/BackupNow/BackupNow.sh
+Name=BackupNow
+GenericName=Backup
+Comment=BackupNow
+Encoding=UTF-8
+Terminal=false
+Type=Application
+Categories=Accessories;System;
+Icon=/home/maria/Projects/BackupNow/BackupNow-48.png
+
+# Gnome and KDE 3 uses Comment.
+# Name[en_US]=BackupNow
+# TargetEnvironment=Unity
+Path=
+StartupNotify=false

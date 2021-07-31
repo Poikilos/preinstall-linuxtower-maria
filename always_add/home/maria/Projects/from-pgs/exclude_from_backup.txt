@@ -1,0 +1,63 @@
+.cache
+.ccache
+.config/BraveSoftware/Brave-Browser/Default/Service Worker
+.config/chromium/Shader Cache
+.config/chromium/Default/Service Worker/CacheStorage
+.config/chromium/Default/Service Worker/ScriptCache
+.config/chromium/Default/Web Data
+.config/chromium/Default/File System
+.config/chromium/Default/IndexedDB
+.config/chromium/Profile 1/Service Worker/CacheStorage
+.config/chromium/Profile 1/Service Worker/ScriptCache
+.config/chromium/Profile 1/Web Data
+.config/chromium/Profile 1/File System
+.config/chromium/Profile 1/IndexedDB
+.config/chromium/Profile 1/Session Storage
+.config/chromium/Profile 1/Shortcuts
+.config/chromium/Profile 1/Shortcuts-journal
+.config/chromium/Profile 1/Web Data-journal
+.config/chromium/Profile 1/Site Characteristics Database
+.config/discord/Cache
+.config/discord/GPUCache
+.local/share/Trash
+.local/share/ark/QtWebEngine/Default/GPUCache
+.local/share/Steam
+FCAWorldB
+Crash Reports
+datareporting
+_cacache
+cache
+crashes
+storage/default
+.thumbnails
+1.eclipse.old
+ShaderCache/GPUCache
+Backup/owncloud/data/owner/files_trashbin
+*.iso
+Downloads
+ownCloud0
+anakondi/search_db
+.minetest/worlds/FCAGameAWorld/map.db
+.minetest/worlds/FCAWorldB/map.db
+minetest/worlds/FCAGameAWorld/map.db
+minetest/worlds/FCAWorldB/map.db
+tmp
+Backup/crystal-code
+Backup/VinceJain
+Desktop/lenovo16
+VMs
+vmware
+Backup/KilaMatriX
+.local/lib64/
+.local/share
+.local/lib
+.local/opt
+Backup/Lone/MisfitMC/MainWorld-worldcut
+Backup/Lone/MisfitMC/MainWorld
+.config/BraveSoftware/Brave-Browser/Default/IndexedDB
+.config/BraveSoftware/Brave-Browser/Default/Local Storage
+linux-minetest-kit-200123
+.config/EnlivenMinetest/linux-minetest-kit
+.config/EnlivenMinetest/minetest-versions
+minetest/games/Bucket_Game
+.config/BraveSoftware/Brave-Browser/GrShaderCache
