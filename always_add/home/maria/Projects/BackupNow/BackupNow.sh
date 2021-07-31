@@ -48,13 +48,15 @@ customExit(){
     fi
     if [ $code -eq 23 ]; then
         echo "  (ignore the Invalid argument error above since it is related to temporary files or other system files)"
-    #elif [ $code -eq 22 ]; then
-    #    echo "  (ignore the Invalid argument error above since it is related to temporary files or other system files)"
-    #    NOTE: Error 22 can be due to a missing path, so allow exit in that case.
+    elif [ $code -eq 20 ]; then
+        xmessage -buttons Ok:0 -default Ok -nearmouse "Code 20: The user canceled the operation with Ctrl+C."
     else
         xmessage -buttons Ok:0 -default Ok -nearmouse "$msg"
         exit $code
     fi
+    #elif [ $code -eq 22 ]; then
+    #    echo "  (ignore the Invalid argument error above since it is related to temporary files or other system files)"
+    #    NOTE: Error 22 can be due to a missing path, so allow exit in that case.
 }
 
 primaryvol="/media/maria/CRUZER64"
