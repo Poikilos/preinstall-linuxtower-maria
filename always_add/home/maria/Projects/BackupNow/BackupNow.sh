@@ -1,21 +1,38 @@
-#!/bin/sh
+#!/bin/bash
 #TARGET=/Volumes/TRANSCEND16
 #TARGET=/media/maria/TRANSCEND16
+PREV_DIR="`pwd`"
 
-cd ~/git/BackupNow
-if [ $? -eq 0 ]; then
-    echo "* updating BackupNow..."
-    git pull
-    ~/git/BackupNow/manage.sh
-    if [ $? -eq 0 ]; then
-        echo "  * The backup was skipped since the system management script ran a different backup."
-        exit 0
-    else
-        echo "  * The shell backup will run since the updated didn't run a backup."
-    fi
-else
-    echo "  * The shell backup will run since there was no updated backup program."
+if [ "@MANAGE" = "@" ]; then
+    MANAGE=true
 fi
+
+for var in "$@"
+do
+    if [ "@$var" = "@--no-management" ]; then
+        MANAGE=false
+    fi
+done
+
+
+if [ "@MANAGE" = "@true" ]; then
+    cd ~/git/BackupNow
+    if [ $? -eq 0 ]; then
+        echo "* updating BackupNow..."
+        git pull
+        ~/git/BackupNow/manage.sh
+        if [ $? -eq 0 ]; then
+            echo "  * The backup was skipped since the system management script ran a different backup."
+            exit 0
+        else
+            echo "  * The shell backup will run since the updated didn't run a backup."
+        fi
+    else
+        echo "  * The shell backup will run since there was no updated backup program."
+    fi
+fi
+
+cd "$PREV_DIR"
 
 customExit(){
     msg="$1"
@@ -29,8 +46,12 @@ customExit(){
     elif [ ! -z "$code" ]; then
         msg="Error code $code: $msg"
     fi
-    xmessage -buttons Ok:0 -default Ok -nearmouse "$msg"
-    exit $code
+    if [ $code -eq 23 ]; then
+        echo "  (ignore the Invalid argument error above since it is related to temporary files or other system files)"
+    else
+        xmessage -buttons Ok:0 -default Ok -nearmouse "$msg"
+        exit $code
+    fi
 }
 
 primaryvol="/media/maria/CRUZER64"
