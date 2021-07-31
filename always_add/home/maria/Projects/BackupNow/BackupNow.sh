@@ -4,21 +4,26 @@
 
 cd ~/git/BackupNow
 if [ $? -eq 0 ]; then
+    echo "* updating BackupNow..."
     git pull
     ~/git/BackupNow/manage.sh
     if [ $? -eq 0 ]; then
-        echo "The backup was skipped since the system management script ran a different backup."
+        echo "  * The backup was skipped since the system management script ran a different backup."
         exit 0
     else
-        echo "The shell backup will run since the updated didn't run a backup."
+        echo "  * The shell backup will run since the updated didn't run a backup."
     fi
 else
-    echo "The shell backup will run since there was no updated backup program."
+    echo "  * The shell backup will run since there was no updated backup program."
 fi
 
 customExit(){
     msg="$1"
-    code="$2"
+    code=""
+    if [ ! -d "$2" ]; then
+        code=$2
+    fi
+    code=$2
     if [ -z "$1" ]; then
         msg="Unknown Error $code"
     elif [ ! -z "$code" ]; then
