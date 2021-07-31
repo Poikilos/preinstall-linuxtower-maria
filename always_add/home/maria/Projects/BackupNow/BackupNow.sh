@@ -48,6 +48,8 @@ customExit(){
     fi
     if [ $code -eq 23 ]; then
         echo "  (ignore the Invalid argument error above since it is related to temporary files or other system files)"
+    elif [ $code -eq 23 ]; then
+        echo "  (ignore the Invalid argument error above since it is related to temporary files or other system files)"
     else
         xmessage -buttons Ok:0 -default Ok -nearmouse "$msg"
         exit $code
