@@ -109,17 +109,25 @@ if [ $code -ne 0 ]; then
     customExit "Copying $src failed. Look at the black console window to see the errors and copy so that you can paste them into an email or document for support." $code
 fi
 #cp -Rvf ~/Projects/ $DST_PROFILE/Projects
+
+
 echo "* copying Firefox Bookmarks..."
 #formerly fdp08zhg:
-this_source_path="/home/maria/.mozilla/firefox/8bvxllvz.default/bookmarkbackups"
-this_dest_path="$DST_PROFILE/.mozilla/firefox/8bvxllvz.default/bookmarkbackups"
-mkdir -p "$this_dest_path"
-rsync -tr --info=progress2 "$this_source_path/" "$this_dest_path"
-#^ formerly had no slash
-code=$?
-if [ $code -ne 0 ]; then
-    xmessage -buttons Ok:0 -default Ok -nearmouse "Copying $src failed with code $code. Look at the black Terminal window behind this message to see the errors and copy and paste them to somewhere."
-fi
+#this_source_path="/home/maria/.mozilla/firefox/8bvxllvz.default/bookmarkbackups"
+#this_dest_path="$DST_PROFILE/.mozilla/firefox/8bvxllvz.default/bookmarkbackups"
+for sub in `ls ~/.mozilla/firefox`
+do
+    this_source_path="/home/maria/.mozilla/firefox/$sub/bookmarkbackups"
+    this_dest_path="$DST_PROFILE/.mozilla/firefox/$sub/bookmarkbackups"
+    mkdir -p "$this_dest_path"
+    rsync -tr --info=progress2 "$this_source_path/" "$this_dest_path"
+    #^ formerly had no slash
+    code=$?
+    if [ $code -ne 0 ]; then
+        xmessage -buttons Ok:0 -default Ok -nearmouse "Copying $src failed with code $code. Look at the black Terminal window behind this message to see the errors and copy and paste them to somewhere."
+    fi
+done
+
 echo "* copying Documents..."
 src="$HOME/Documents"
 rsync -tr --info=progress2 --exclude-from='/home/maria/exclude.txt' "$src/" "$DST_PROFILE/Documents"
