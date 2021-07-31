@@ -9,7 +9,11 @@ if [ $? -eq 0 ]; then
     if [ $? -eq 0 ]; then
         echo "The backup was skipped since the system management script ran a different backup."
         exit 0
+    else
+        echo "The shell backup will run since the updated didn't run a backup."
     fi
+else
+    echo "The shell backup will run since there was no updated backup program."
 fi
 
 customExit(){
