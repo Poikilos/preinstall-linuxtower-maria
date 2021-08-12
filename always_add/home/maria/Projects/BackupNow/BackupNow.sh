@@ -80,7 +80,7 @@ fi
 
 for tryvol in "/media/maria/CRUZER64" "/media/maria/FREEMCBOOT"
 do
-    try_vol_name="`basename "$targetvol"`"
+    try_vol_name="`basename "$tryvol"`"
     if [ -f "backupnow/mount.py" ]; then
         echo "* attempting to mount $try_vol_name..."
         python3 backupnow/mount.py $try_vol_name
