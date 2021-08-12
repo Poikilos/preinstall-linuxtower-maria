@@ -82,7 +82,10 @@ for tryvol in "/media/maria/CRUZER64" "/media/maria/FREEMCBOOT"
 do
     try_vol_name="`basename "$targetvol"`"
     if [ -f "backupnow/mount.py" ]; then
+        echo "* attempting to mount $try_vol_name..."
         python3 backupnow/mount.py $try_vol_name
+    else
+        echo "* Warning: backupnow/mount.py doesn't exist in \"`pwd`\"."
     fi
     if [ -d "$tryvol" ]; then
         targetvol="$tryvol"
