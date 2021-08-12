@@ -62,13 +62,35 @@ customExit(){
 primaryvol="/media/maria/CRUZER64"
 drive_description="CRUZER64 (Black and Red SanDisk Flash Drive)"
 targetvol=
+targetvol_name=
+
+#try_vol_name="`basename "$primaryvol"`"
+#cd ~/git/BackupNow
+#if [ -f "backupnow/__init__.py" ]; then
+#    python3 backupnow/mount.py $try_vol_name
+#else
+#    xmessage -buttons Ok:0 -default Ok -nearmouse "$0 must run from the BackupNow repo to attempt to mount the drive automatically." $code
+#fi
+#cd "$PREV_DIR"
+
+cd ~/git/BackupNow
+if [ ! -f "backupnow/__init__.py" ]; then
+    xmessage -buttons Ok:0 -default Ok -nearmouse "$0 must run from the BackupNow repo to attempt to mount the drive automatically." $code
+fi
+
 for tryvol in "/media/maria/CRUZER64" "/media/maria/FREEMCBOOT"
 do
+    try_vol_name="`basename "$targetvol"`"
+    if [ -f "backupnow/mount.py" ]; then
+        python3 backupnow/mount.py $try_vol_name
+    fi
     if [ -d "$tryvol" ]; then
         targetvol="$tryvol"
+        targetvol_name="$try_vol_name"
         break
     fi
 done
+cd "$PREV_DIR"
 
 if [ -z "$targetvol" ]; then
     #( speaker-test -t sine -f 1000 )& pid=$! ; sleep 0.25s ; kill -9 $pid
@@ -88,6 +110,7 @@ fi
 
 #TARGET=$targetvol/macbuntu
 TARGET=$targetvol
+
 
 DST_PROFILE="$TARGET/$USER"
 mkdir -p "$DST_PROFILE"
