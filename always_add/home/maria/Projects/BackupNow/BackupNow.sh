@@ -78,12 +78,15 @@ if [ ! -f "backupnow/__init__.py" ]; then
     xmessage -buttons Ok:0 -default Ok -nearmouse "$0 must run from the BackupNow repo to attempt to mount the drive automatically." $code
 fi
 
-for tryvol in "/media/maria/CRUZER64" "/media/maria/FREEMCBOOT"
+for tryvol in "/media/maria/BACKUP" "/media/maria/CRUZER641" "/media/maria/CRUZER64" "/media/maria/FREEMCBOOT"
 do
     try_vol_name="`basename "$tryvol"`"
     if [ -f "backupnow/mount.py" ]; then
         echo "* attempting to mount $try_vol_name..."
         python3 backupnow/mount.py $try_vol_name
+        if [ $? -eq 0 ]; then
+            echo "  - OK (mounted $try_vol_name)"
+        fi
     else
         echo "* Warning: backupnow/mount.py doesn't exist in \"`pwd`\"."
     fi
@@ -113,17 +116,37 @@ fi
 
 #TARGET=$targetvol/macbuntu
 TARGET=$targetvol
-
+echo "* Using volume: '$TARGET'"
 
 DST_PROFILE="$TARGET/$USER"
 mkdir -p "$DST_PROFILE"
+echo "* Using profile destination: '$DST_PROFILE'"
 
 # Below, home was formerly "Users" to match old mac backup drive:
 mkdir -p "$DST_PROFILE/Documents"
 mkdir -p "$DST_PROFILE/Desktop"
 mkdir -p "$DST_PROFILE/Projects"
+echo "* testing drive..."
+DATE="`date '+%Y-%m-%d %H:%M:%S'`"
+DATE_FILE="$TARGET/backup.log"
+if [ -f "$DATE_FILE" ]; then
+    rm -f "$DATE_FILE"
+    if [ $? -ne 0 ]; then
+        echo "Error: $TARGET is readonly. 'rm -f $DATE_FILE' failed."
+        exit 1
+    fi
+fi
+echo "started=\"$DATE\"" > "$DATE_FILE"
+
+if [ -f "$DATE_FILE" ]; then
+    echo "  - OK (wrote $DATE_FILE)"
+else
+    echo "   - FAILED (could not create $DATE_FILE)"
+    exit 1
+fi
 echo "* copying Desktop..."
 src="$HOME/Desktop"
+echo "rsync --protect-args -tr --info=progress2 \"$src/\" \"$DST_PROFILE/Desktop\""
 rsync --protect-args -tr --info=progress2 "$src/" "$DST_PROFILE/Desktop"
 code=$?
 if [ $code -ne 0 ]; then
@@ -132,13 +155,13 @@ fi
 #cp ~/Desktop/ $DST_PROFILE/Desktop
 echo "* copying Projects..."
 src="$HOME/Projects"
+echo "rsync --protect-args -tr --info=progress2 \"$src/\" \"$DST_PROFILE/Projects\""
 rsync --protect-args -tr --info=progress2 "$src/" "$DST_PROFILE/Projects"
 code=$?
 if [ $code -ne 0 ]; then
     customExit "Copying $src failed. Look at the black console window to see the errors and copy so that you can paste them into an email or document for support." $code
 fi
-#cp -Rvf ~/Projects/ $DST_PROFILE/Projects
-
+# cp -Rvf ~/Projects/ $DST_PROFILE/Projects
 
 echo "* copying Firefox Bookmarks..."
 #formerly fdp08zhg:
@@ -165,6 +188,7 @@ done
 
 echo "* copying Documents..."
 src="$HOME/Documents"
+echo "rsync --protect-args -tr --info=progress2 --exclude-from='/home/maria/exclude.txt' \"$src/\" \"$DST_PROFILE/Documents\""
 rsync --protect-args -tr --info=progress2 --exclude-from='/home/maria/exclude.txt' "$src/" "$DST_PROFILE/Documents"
 code=$?
 if [ $code -ne 0 ]; then
@@ -178,5 +202,13 @@ fi
 #    ( speaker-test -t sine -f 1000 )& pid=$! ; sleep 0.25s ; kill -9 $pid
 #    exit 1
 #fi
+
+SECONDARY=/media/maria/NOT_ON_COMPUTER
+if [ -f $SECONDARY/volume.rc ]; then
+    echo "* Backing up NOT_ON_COMPUTER"
+    rsync -rt --info=progress2 $SECONDARY/ $TARGET/backup_of_not_on_computer
+fi
+END_DATE="`date '+%Y-%m-%d %H:%M:%S'`"
+echo "finished=\"$END_DATE\"" >> "$DATE_FILE"
 xmessage -buttons Ok:0 -default Ok -nearmouse "The backup completed successfully."
 exit 0
