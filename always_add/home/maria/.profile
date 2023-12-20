@@ -24,3 +24,6 @@ fi
 export PATH="$PATH:$HOME/.local/bin"
 
 #~/set-resolution.sh
+if [ ! -z "$XDG_DATA_DIRS" ]; then
+    XDG_DATA_DIRS="/home/maria/.local/share:$XDG_DATA_DIRS"
+fi
