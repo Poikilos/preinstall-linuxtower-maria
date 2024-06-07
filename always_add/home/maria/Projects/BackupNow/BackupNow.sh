@@ -2,10 +2,16 @@
 #TARGET=/Volumes/TRANSCEND16
 #TARGET=/media/maria/TRANSCEND16
 PREV_DIR="`pwd`"
-
+PARTIAL_LOG=~/Desktop/backup-partial.log
+if [ -f "$PARTIAL_LOG" ]; then
+    rm "$PARTIAL_LOG"
+fi
 if [ "@$MANAGE" = "@" ]; then
     MANAGE=true
 fi
+
+mkdir -p ~/tmp
+ERROR_TMP=~/tmp/BackupNow-last-error.txt
 
 for var in "$@"
 do
@@ -31,7 +37,8 @@ if [ "@$MANAGE" = "@true" ]; then
         echo "  * The shell backup will run since there was no updated backup program."
     fi
 fi
-
+DATE_FILE=
+# ^ set later
 cd "$PREV_DIR"
 
 customExit(){
@@ -49,11 +56,22 @@ customExit(){
     if [ $code -eq 23 ]; then
         echo "  (ignore the Invalid argument error above since it is related to temporary files or other system files)"
     elif [ $code -eq 20 ]; then
-        xmessage -buttons Ok:0 -default Ok -nearmouse "Code 20: The user canceled the operation with Ctrl+C."
+        msg="Code 20: The user canceled the operation with Ctrl+C."
+        xmessage -buttons Ok:0 -default Ok -nearmouse "$msg"
     else
         xmessage -buttons Ok:0 -default Ok -nearmouse "$msg"
+        if [ ! -z "$DATE_FILE" ]; then
+            echo "$msg" >> "$DATE_FILE"
+        fi
+        cp "$DATE_FILE" "$PARTIAL_LOG"
+        chmod -x "$PARTIAL_LOG"
+        echo "\n\n(This is a copy of $DATE_FILE)" >> "$PARTIAL_LOG"
         exit $code
     fi
+    if [ ! -z "$DATE_FILE" ]; then
+        echo "$msg" >> "$DATE_FILE"
+    fi
+
     #elif [ $code -eq 22 ]; then
     #    echo "  (ignore the Invalid argument error above since it is related to temporary files or other system files)"
     #    NOTE: Error 22 can be due to a missing path, so allow exit in that case.
@@ -108,10 +126,11 @@ if [ -z "$targetvol" ]; then
     if [ ! -z "$drive_description" ]; then
         _description="$drive_description"
     fi
-    xmessage -buttons Ok:0 -default Ok -nearmouse "Error: The drive was not detected. Try re-inserting $_description."
+    msg="Error: The drive was not detected. Try re-inserting $_description."
+    xmessage -buttons Ok:0 -default Ok -nearmouse "$msg"
     # echo "$drive_name is not plugged in--cannot continue."
     #read -n 1 -p "Press [Enter] key to exit..."
-    exit 1
+    customExit "$msg"
 fi
 
 #TARGET=$targetvol/macbuntu
@@ -132,8 +151,8 @@ DATE_FILE="$TARGET/backup.log"
 if [ -f "$DATE_FILE" ]; then
     rm -f "$DATE_FILE"
     if [ $? -ne 0 ]; then
-        echo "Error: $TARGET is readonly. 'rm -f $DATE_FILE' failed."
-        exit 1
+        customExit "Error: $TARGET is readonly. 'rm -f $DATE_FILE' failed."
+        
     fi
 fi
 echo "started=\"$DATE\"" > "$DATE_FILE"
@@ -141,14 +160,16 @@ echo "started=\"$DATE\"" > "$DATE_FILE"
 if [ -f "$DATE_FILE" ]; then
     echo "  - OK (wrote $DATE_FILE)"
 else
-    echo "   - FAILED (could not create $DATE_FILE)"
-    exit 1
+    customExit "   - FAILED (could not create $DATE_FILE)"
+    
 fi
 echo "* copying Desktop..."
 src="$HOME/Desktop"
 echo "rsync --protect-args -tr --info=progress2 \"$src/\" \"$DST_PROFILE/Desktop\""
-rsync --protect-args -tr --info=progress2 "$src/" "$DST_PROFILE/Desktop"
+rsync --protect-args -tr --info=progress2 "$src/" "$DST_PROFILE/Desktop" 2> "$ERROR_TMP"
 code=$?
+cat $ERROR_TMP | tee -a "$DATE_FILE"
+rm $ERROR_TMP
 if [ $code -ne 0 ]; then
     customExit "Copying $src failed. Look at the black Terminal window behind this message to see the errors and copy so that you can paste them into an email or document for support." $code
 fi
@@ -156,8 +177,10 @@ fi
 echo "* copying Projects..."
 src="$HOME/Projects"
 echo "rsync --protect-args -tr --info=progress2 \"$src/\" \"$DST_PROFILE/Projects\""
-rsync --protect-args -tr --info=progress2 "$src/" "$DST_PROFILE/Projects"
+rsync --protect-args -tr --info=progress2 "$src/" "$DST_PROFILE/Projects" 2> "$ERROR_TMP"
 code=$?
+cat $ERROR_TMP | tee -a "$DATE_FILE"
+rm $ERROR_TMP
 if [ $code -ne 0 ]; then
     customExit "Copying $src failed. Look at the black console window to see the errors and copy so that you can paste them into an email or document for support." $code
 fi
@@ -173,9 +196,11 @@ do
     this_dest_path="$DST_PROFILE/.mozilla/firefox/$sub/bookmarkbackups"
     if [ -d "$this_source_path" ]; then
         mkdir -p "$this_dest_path"
-        rsync --protect-args -tr --info=progress2 "$this_source_path/" "$this_dest_path"
-        #^ formerly had no slash
+        rsync --protect-args -tr --info=progress2 "$this_source_path/" "$this_dest_path" 2> "$ERROR_TMP"
         code=$?
+        cat $ERROR_TMP | tee -a "$DATE_FILE"
+        rm $ERROR_TMP
+        #^ formerly had no slash
         if [ $code -ne 0 ]; then
             customExit "Copying $src failed with code $code. Look at the black Terminal window behind this message to see the errors and copy and paste them to somewhere." $code
         fi
@@ -189,8 +214,10 @@ done
 echo "* copying Documents..."
 src="$HOME/Documents"
 echo "rsync --protect-args -tr --info=progress2 --exclude-from='/home/maria/exclude.txt' \"$src/\" \"$DST_PROFILE/Documents\""
-rsync --protect-args -tr --info=progress2 --exclude-from='/home/maria/exclude.txt' "$src/" "$DST_PROFILE/Documents"
+rsync --protect-args -tr --info=progress2 --exclude-from='/home/maria/exclude.txt' "$src/" "$DST_PROFILE/Documents" 2> "$ERROR_TMP"
 code=$?
+cat $ERROR_TMP | tee -a "$DATE_FILE"
+rm $ERROR_TMP
 if [ $code -ne 0 ]; then
     customExit "Copying $src failed. Look at the black console window to see the errors and copy and paste them to somewhere." $code
 fi
@@ -206,9 +233,20 @@ fi
 SECONDARY=/media/maria/NOT_ON_COMPUTER
 if [ -f $SECONDARY/volume.rc ]; then
     echo "* Backing up NOT_ON_COMPUTER"
-    rsync -rt --info=progress2 $SECONDARY/ $TARGET/backup_of_not_on_computer
+    rsync -rt --info=progress2 $SECONDARY/ $TARGET/backup_of_not_on_computer 2> "$ERROR_TMP"
+    code2=$?
+    cat $ERROR_TMP | tee -a "$DATE_FILE"
+    rm $ERROR_TMP
+    if [ $code2 -ne 0 ]; then
+        customExit "Copying $src failed. Look at the black console window to see the errors and copy and paste them to somewhere." $code2
+    fi
 fi
 END_DATE="`date '+%Y-%m-%d %H:%M:%S'`"
 echo "finished=\"$END_DATE\"" >> "$DATE_FILE"
+# Last successful backup:
+DONE_LOG=~/Desktop/backup-complete.log
+cp "$DATE_FILE" "$DONE_LOG"
+chmod -x "$DONE_LOG"
+echo "This is the log of the last successful backup. For any later backups attempted with errors see the backup.log file on the BACKUP drive instead." >> "$DONE_LOG"
 xmessage -buttons Ok:0 -default Ok -nearmouse "The backup completed successfully."
 exit 0
