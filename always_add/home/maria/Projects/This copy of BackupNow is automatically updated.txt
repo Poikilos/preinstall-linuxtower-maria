@@ -1,0 +1,8 @@
+See ~/git/BackupNow/manage.sh
+which generates BackupNow by combining the following:
+- `~/git/preinstall-linuxtower-maria/always_add/home/maria/Projects/BackupNow`
+  (*not* the entire `~/git/preinstall-linuxtower-maria/always_add/home/maria` directory
+   which should be *manually* merged to avoid losing local changes)
+  - contains "BackupNow.sh", icons, and rsyncprogress.py
+- ~/git/BackupNow
+  - contains "manage.sh" and python "backupnowcmd.py", "backupnow" module, etc.
